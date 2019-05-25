@@ -111,9 +111,23 @@ import javax.security.auth.x500.X500Principal
  * a chain of certificates. The server uses a set of trusted root certificates to authenticate the
  * client. Subject alternative names are not used for client authentication.
  */
-class HeldCertificate(private val keyPair: KeyPair, private val certificate: X509Certificate) {
+class HeldCertificate(
+  @get:JvmName("keyPair") val keyPair: KeyPair,
+  @get:JvmName("certificate") val certificate: X509Certificate
+) {
+
+  @JvmName("-deprecated_certificate")
+  @Deprecated(
+      message = "moved to val",
+      replaceWith = ReplaceWith(expression = "certificate"),
+      level = DeprecationLevel.WARNING)
   fun certificate(): X509Certificate = certificate
 
+  @JvmName("-deprecated_keyPair")
+  @Deprecated(
+      message = "moved to val",
+      replaceWith = ReplaceWith(expression = "keyPair"),
+      level = DeprecationLevel.WARNING)
   fun keyPair(): KeyPair = keyPair
 
   /**
@@ -121,13 +135,21 @@ class HeldCertificate(private val keyPair: KeyPair, private val certificate: X50
    *
    * [rfc_7468]: https://tools.ietf.org/html/rfc7468
    */
-  fun certificatePem(): String {
-    return buildString {
-      append("-----BEGIN CERTIFICATE-----\n")
-      encodeBase64Lines(certificate.encoded.toByteString())
-      append("-----END CERTIFICATE-----\n")
+  @get:JvmName("certificatePem") val certificatePem: String
+    get() {
+      return buildString {
+        append("-----BEGIN CERTIFICATE-----\n")
+        encodeBase64Lines(certificate.encoded.toByteString())
+        append("-----END CERTIFICATE-----\n")
+      }
     }
-  }
+
+  @JvmName("-deprecated_certificatePem")
+  @Deprecated(
+      message = "moved to val",
+      replaceWith = ReplaceWith(expression = "certificatePem"),
+      level = DeprecationLevel.WARNING)
+  fun certificatePem(): String = certificatePem
 
   /**
    * Returns the RSA private key encoded in [PKCS #8][rfc_5208] [PEM format][rfc_7468].
@@ -135,13 +157,21 @@ class HeldCertificate(private val keyPair: KeyPair, private val certificate: X50
    * [rfc_5208]: https://tools.ietf.org/html/rfc5208
    * [rfc_7468]: https://tools.ietf.org/html/rfc7468
    */
-  fun privateKeyPkcs8Pem(): String {
-    return buildString {
-      append("-----BEGIN PRIVATE KEY-----\n")
-      encodeBase64Lines(keyPair.private.encoded.toByteString())
-      append("-----END PRIVATE KEY-----\n")
+  @get:JvmName("privateKeyPkcs8Pem") val privateKeyPkcs8Pem: String
+    get() {
+      return buildString {
+        append("-----BEGIN PRIVATE KEY-----\n")
+        encodeBase64Lines(keyPair.private.encoded.toByteString())
+        append("-----END PRIVATE KEY-----\n")
+      }
     }
-  }
+
+  @JvmName("-deprecated_privateKeyPkcs8Pem")
+  @Deprecated(
+      message = "moved to val",
+      replaceWith = ReplaceWith(expression = "privateKeyPkcs8Pem"),
+      level = DeprecationLevel.WARNING)
+  fun privateKeyPkcs8Pem(): String = privateKeyPkcs8Pem
 
   /**
    * Returns the RSA private key encoded in [PKCS #1][rfc_8017] [PEM format][rfc_7468].
@@ -149,14 +179,22 @@ class HeldCertificate(private val keyPair: KeyPair, private val certificate: X50
    * [rfc_8017]: https://tools.ietf.org/html/rfc8017
    * [rfc_7468]: https://tools.ietf.org/html/rfc7468
    */
-  fun privateKeyPkcs1Pem(): String {
-    require(keyPair.private is RSAPrivateKey) { "PKCS1 only supports RSA keys" }
-    return buildString {
-      append("-----BEGIN RSA PRIVATE KEY-----\n")
-      encodeBase64Lines(pkcs1Bytes())
-      append("-----END RSA PRIVATE KEY-----\n")
+  @get:JvmName("privateKeyPkcs1Pem") val privateKeyPkcs1Pem: String
+    get() {
+      require(keyPair.private is RSAPrivateKey) { "PKCS1 only supports RSA keys" }
+      return buildString {
+        append("-----BEGIN RSA PRIVATE KEY-----\n")
+        encodeBase64Lines(pkcs1Bytes())
+        append("-----END RSA PRIVATE KEY-----\n")
+      }
     }
-  }
+
+  @JvmName("-deprecated_privateKeyPkcs1Pem")
+  @Deprecated(
+      message = "moved to val",
+      replaceWith = ReplaceWith(expression = "privateKeyPkcs1Pem"),
+      level = DeprecationLevel.WARNING)
+  fun privateKeyPkcs1Pem(): String = privateKeyPkcs1Pem
 
   private fun pkcs1Bytes(): ByteString {
     val privateKeyInfo = PrivateKeyInfo.getInstance(keyPair.private.encoded)
